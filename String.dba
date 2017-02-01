@@ -1,0 +1,41 @@
+Rem *** Include File: String.dba ***
+Rem Created: 3/31/2007 8:24:43 AM
+
+Rem Included in Project: C:\Program Files\The Game Creators\Dark Basic Professional\Projects\SuperPong\SuperPong.dbpro
+
+global csv_start as dword
+global csv_values as string
+
+`extracts individual values from a comma separated values string
+function csv$(called_values as string)
+
+  local count as dword
+  local return_value as string
+
+  `if the function was called with values, replace the saved values
+  if called_values <> ""
+    csv_values = called_values
+    csv_start = 1
+    exitfunction ""
+  endif
+
+  `if all the tokens have been taken return end of string
+  if csv_start > len(csv_values) then exitfunction "END OF STRING"
+
+  `look for a comma
+  for count = csv_start to len(csv_values)
+
+    `if the character's a comma, return the token
+    if mid$(csv_values, count) = ","
+      return_value = right$(left$(csv_values, count - 1), count - csv_start)
+      csv_start = count + 1
+      exitfunction return_value
+    endif
+
+  next count
+
+  `no comma found, so return last token
+  return_value = right$(csv_values, count - csv_start)
+  csv_start = count
+
+endfunction return_value

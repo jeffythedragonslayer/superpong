@@ -1,0 +1,108 @@
+Rem *** Include File: GOAL.dba ***
+Rem Created: 3/31/2007 7:15:57 AM
+
+Rem Included in Project: C:\Program Files\The Game Creators\Dark Basic Professional\Projects\SuperPong\SuperPong.dbpro
+
+global goal_amount as dword
+
+type goal
+  object as dword
+  px as float
+  py as float
+  pz as float
+  size as float
+endtype
+
+function GOAL_init()
+
+  dim goal() as goal
+
+endfunction
+
+function GOAL_new(size as float)
+
+  local index as dword
+
+  array insert at bottom goal()
+  goal().object = make_obj_cube(size)
+  goal().size = size
+  set object collision off goal().object
+  color object goal().object, rgb(0, 255, 0)
+  
+  index = array count(goal())
+
+endfunction index
+
+function GOAL_delete(index as dword)
+
+  delete object goal(index).object
+  array delete element goal(), index
+  
+endfunction
+
+function GOAL_nuke()
+
+  local total as integer
+  local index as dword
+
+  total = array count(goal())
+  if total = -1 then exitfunction
+
+  for index = 0 to total
+    GOAL_delete(0)
+  next index
+
+endfunction
+
+function GOAL_position(index as dword, x as float, y as float, z as float)
+
+  goal(index).px = x
+  goal(index).py = y
+  goal(index).pz = z
+  position object goal(index).object, x, y, z
+
+endfunction
+
+function GOAL_update()
+
+  local total as integer
+  local index as dword
+  local ball_total as integer
+  local ball as dword
+  
+  total = array count(goal())
+  if total = -1 then exitfunction
+  
+  ball_total = array count(ball())
+  
+  for index = 0 to total
+
+    if ball_total > -1
+      for ball = 0 to ball_total
+        if objs_distance(goal(index).object, ball(ball).object) < goal(index).size
+          BALL_delete(ball)
+          dec ball_total
+          dec goal_amount
+          if goal_amount = 0
+            LEVELLOADER_unload()
+            inc levelnum
+            if file exist("Level " + str$(levelnum) + ".txt") = 0
+              win = 1
+              exitfunction
+            endif
+            LEVELLOADER_load("Level " + str$(levelnum) + ".txt")
+            exitfunction
+          endif
+          exit
+        endif
+      next ball
+    endif
+
+    xrotate object goal(index).object, 1+object angle x(goal(index).object)
+    yrotate object goal(index).object, 1+object angle y(goal(index).object)
+
+  next index
+  
+  text screen width() - text width("Goals Needed: " + str$(goal_amount)) - 10, 0, "Goals Needed: " + str$(goal_amount)
+
+endfunction

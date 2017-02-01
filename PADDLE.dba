@@ -1,0 +1,140 @@
+Rem *** Include File: PADDLE.dba ***
+Rem Created: 3/27/2007 3:15:29 PM
+
+Rem Included in Project: C:\Program Files\The Game Creators\Dark Basic Professional\Projects\SuperPong\SuperPong.dbpro
+
+type paddle
+  object as dword
+  controller as dword
+
+  `the controller variable defines who moves the paddle
+  #constant paddle_controller_none = 0
+  #constant paddle_controller_arrowkeys = 1
+  #constant paddle_controller_WASD = 2
+  #constant paddle_controller_mouse = 3
+  #constant paddle_controller_AI = 4
+
+  px as float
+  py as float
+  pz as float
+endtype
+
+function PADDLE_init()
+
+  dim paddle() as paddle
+
+endfunction
+
+function PADDLE_new(controller as dword)
+
+  local index as dword
+
+  array insert at bottom paddle()
+  paddle().object = make_obj_box(2.5, 2.5, .4)
+  paddle().controller = controller
+  select controller
+    case 1
+      color object paddle().controller, rgb(255, 0, 0)
+    endcase
+    case 2
+      color object paddle().controller, rgb(0, 255, 255)
+    endcase
+  endselect
+
+  index = array count(paddle())
+
+endfunction index
+
+function PADDLE_delete(index as dword)
+
+  delete object paddle(index).object
+  array delete element paddle(), index
+
+endfunction
+
+function PADDLE_nuke()
+
+  local total as integer
+  local index as dword
+
+  total = array count(paddle())
+  if total = -1 then exitfunction
+
+  for index = 0 to total
+    PADDLE_delete(0)
+  next index
+
+endfunction
+
+function PADDLE_position(index as dword, x as float, y as float, z as float)
+
+  paddle(index).px = x
+  paddle(index).py = y
+  paddle(index).pz = z
+  position object paddle(index).object, x, y, z
+
+endfunction
+
+function PADDLE_update()
+
+  local total as integer
+  local index as dword
+  local controller as dword
+  local x as float
+  local y as float
+  local ball as dword
+  local ball_total as integer
+
+  total = array count(paddle())
+  if total = -1 then exitfunction
+  
+  ball_total = array count(ball())
+
+  for index = 0 to total
+
+    `get controller movement
+    controller = paddle(index).controller
+    x = 0
+    y = 0
+    select controller
+      case paddle_controller_arrowkeys
+        x = (rightkey() - leftkey()) / 20.0
+        y = (upkey() - downkey()) / 20.0
+      endcase
+      case paddle_controller_WASD
+        x = (keystate(32) - keystate(30)) / 20.0
+        y = (keystate(17) - keystate(31)) / 20.0
+      endcase
+      case paddle_controller_mouse
+        x = mousemovex() / 100.0
+        y = -mousemovey() / 100.0
+      endcase
+      case paddle_controller_AI
+      endcase
+    endselect
+    
+    if levelnum = 0
+      x = y*2
+      y = 0
+      if paddle(index).px < -8 and x < 0 then paddle(index).px = -8
+      if paddle(index).px > 8 and x > 0 then paddle(index).px = 8
+    endif
+
+    inc paddle(index).px, x
+    inc paddle(index).py, y
+
+    position object paddle(index).object, paddle(index).px, paddle(index).py, paddle(index).pz
+
+    if ball_total > -1
+      for ball = 0 to ball_total
+        if object collision(paddle(index).object, ball(ball).object)
+          `make the ball inherit some of the paddle's momentum
+          text 500, 500, "collision"
+          BALL_push(ball, x/2, y/2, -2*ball(ball).sz);
+        endif
+      next ball
+    endif
+
+  next index
+
+endfunction

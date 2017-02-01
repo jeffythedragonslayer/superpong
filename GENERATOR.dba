@@ -1,0 +1,107 @@
+Rem *** Include File: GENERATOR.dba ***
+Rem Created: 3/30/2007 4:00:09 PM
+
+Rem Included in Project: C:\Program Files\The Game Creators\Dark Basic Professional\Projects\SuperPong\SuperPong.dbpro
+
+type generator
+  object as dword
+  px as float
+  py as float
+  pz as float
+  
+  bx as float
+  by as float
+  bz as float
+
+  delay as dword
+  time as dword
+
+endtype
+
+function GENERATOR_init()
+
+  global dim generator() as generator
+
+endfunction
+
+function GENERATOR_new()
+
+  local index as dword
+
+  array insert at bottom generator()
+  generator().object = make_obj_cube(.8)
+  set object collision off generator().object
+  color object generator().object, rgb(255, 255, 0)
+  generator().delay = 60
+  generator().time = generator().delay
+
+  index = array count(generator())
+
+endfunction index
+
+function GENERATOR_delete(index as dword)
+
+  delete object generator(index).object
+  array delete element generator(), index
+
+endfunction
+
+function GENERATOR_nuke()
+
+  local total as integer
+  local index as dword
+
+  total = array count(generator())
+  if total = -1 then exitfunction
+
+  for index = 0 to total
+    GENERATOR_delete(0)
+  next index
+
+endfunction
+
+function GENERATOR_set(index as dword, speed as dword, x as float, y as float, z as float)
+
+  generator(index).delay = speed
+  generator(index).bx = x
+  generator(index).by = y
+  generator(index).bz = z
+
+endfunction
+
+function GENERATOR_position(index as dword, x as float, y as float, z as float)
+
+  generator(index).px = x
+  generator(index).py = y
+  generator(index).pz = z
+  position object generator(index).object, x, y, z
+
+endfunction
+
+function GENERATOR_update()
+
+  local total as integer
+  local index as dword
+  local ball as dword
+
+  total = array count(generator())
+  if total = -1 then exitfunction
+
+  for index = 0 to total
+
+    dec generator(index).time
+    if generator(index).time = 0
+
+      generator(index).time = generator(index).delay
+
+      ball = BALL_new()
+      BALL_position(ball, generator(index).px, generator(index).py, generator(index).pz)
+      BALL_push(ball, generator(index).bx, generator(index).by, generator(index).bz)
+
+    endif
+
+    `yrotate object generator(index).object, 2+object angle y(generator(index).object)
+
+  next index
+
+endfunction

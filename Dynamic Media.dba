@@ -1,0 +1,97 @@
+Rem *** Include File: Dynamic Media.dba ***
+Rem Created: 3/26/2007 4:46:04 PM
+
+Rem Included in Project: C:\Program Files\The Game Creators\Dark Basic Professional\Projects\SuperPong\SuperPong.dbpro
+
+function free_obj()
+
+  local id as dword
+
+  repeat
+    inc id
+  until object exist(id) = 0
+
+endfunction id
+
+function free_img()
+
+  local id as dword
+
+  repeat
+    inc id
+  until image exist(id) = 0
+
+endfunction id
+
+function free_spr()
+
+  local id as dword
+
+  repeat
+    inc id
+  until sprite exist(id) = 0
+
+endfunction id
+
+function get_image(left as dword, top as dword, right as dword, bottom as dword, textureflag as dword)
+
+  local id as dword
+
+  id = free_img()
+  get image id, left, top, right, bottom, textureflag
+
+endfunction id
+
+function make_spr(xpox as integer, ypos as integer, img as dword)
+
+  local id as dword
+
+  id = free_img()
+  sprite id, xpos, ypos, img
+
+endfunction id
+
+function open_to_read(filename as string)
+
+  local id as dword
+  id = free_file()
+  open to read id, filename
+
+endfunction id
+
+function free_file()
+
+  local id as dword
+
+  repeat
+    inc id
+  until file open(id) = 0
+
+endfunction id
+
+function make_obj_sphere(size as float)
+
+  local id as dword
+
+  id = free_obj()
+  make object sphere id, size
+
+endfunction id
+
+function make_obj_cube(size as float)
+
+  local id as dword
+
+  id = free_obj()
+  make object cube id, size
+
+endfunction id
+
+function make_obj_box(width as float, height as float, depth as float)
+
+  local id as dword
+
+  id = free_obj()
+  make object box id, width, height, depth
+
+endfunction id

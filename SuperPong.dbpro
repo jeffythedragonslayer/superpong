@@ -1,0 +1,51 @@
+; **** DarkBASIC Professional Project ****
+; Created by CodeSurge IDE
+version=DBP1.00
+project name=SuperPong
+
+; ****Source file information****
+main=SYSTEM.dba
+include1=BALL.dba
+include2=CAMERA.dba
+include3=Dynamic Media.dba
+include4=GENERATOR.dba
+include5=GOAL.dba
+include6=Math.dba
+include7=PADDLE.dba
+include8=String.dba
+include9=OBSTACLE.dba
+include10=LEVELLOADER.dba
+final source=_Temp.dbsource
+
+;***Executable filename***
+executable=SuperPong.exe
+build type=exe
+
+compression=NO
+encryption=NO
+card options window=NO
+
+; Debugger
+CLI=NO
+
+; *****Display Settings*****
+app title=SuperPong
+graphics mode=fulldesktop
+fullscreen resolution=1024x768x32
+window resolution=1024x768
+
+
+;*****Media files, icons, cursors*****
+media root path=C:\Program Files\The Game Creators\Dark Basic Professional\Projects\SuperPong\
+
+;****Version Information****
+VerComments=3D Pong
+VerCompany=Jeff Linahan
+VerFileDesc=3D Pong
+VerFileNumber=
+VerInternal=SuperPong.exe
+VerCopyright=Copyright (C) Jeff Linahan 2007
+VerTrademark=
+VerFilename=SuperPong.exe
+VerProduct=SuperPong
+VerProductNumber=v1.0

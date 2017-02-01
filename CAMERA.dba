@@ -1,0 +1,124 @@
+Rem *** Include File: CAMERA.dba ***
+Rem Created: 3/27/2007 7:19:36 PM
+
+Rem Included in Project: C:\Program Files\The Game Creators\Dark Basic Professional\Projects\SuperPong\SuperPong.dbpro
+
+global camera_zenith as float
+global camera_azimuth as float
+global camera_distance as float
+global camera_x as float
+global camera_y as float
+global camera_z as float
+
+function CAMERA_init()
+
+  autocam off
+
+endfunction
+
+function CAMERA_rotate(zenith as float, azimuth as float, distance as float)
+
+  camera_zenith = zenith
+  camera_azimuth = azimuth
+  camera_distance = distance
+
+endfunction
+
+function CAMERA_position(x as float, y as float, z as float)
+
+  camera_x = x
+  camera_y = y
+  camera_z = z
+
+endfunction
+
+function CAMERA_orbit(degrees as dword)
+
+  local caption as string
+  
+  if levelnum
+    caption = "Level " + str$(levelnum) + ": " + levelname
+  else
+    caption = levelname
+  endif
+
+  repeat
+    inc camera_azimuth
+    dec degrees
+    CAMERA_update(0)
+    center text screen width()/2, screen height()/2, caption
+    sync
+  until degrees = 0
+
+endfunction
+
+function CAMERA_spiral(degrees as float)
+
+  repeat
+    inc camera_azimuth, 1.5
+    inc camera_distance
+    dec degrees, 1.5
+    CAMERA_update(0)
+    center text screen width()/2, screen height()/2, "Level " + str$(levelnum) + ": " + levelname
+    center text screen width()/2, screen height()/2+64, "Clear"
+    sync
+  until degrees <= 0
+
+endfunction
+
+function CAMERA_swing(zenith as float, azimuth as float, distance as float)
+
+  local caption as string
+  local interval as dword
+  local time as dword
+
+  if levelnum
+    caption = "Level " + str$(levelnum) + ": " + levelname
+    interval = 75
+    time = 100
+  else
+    caption = levelname
+    interval = 40
+    time = 250
+  endif
+
+  for count = 0 to time
+    camera_zenith = curveangle(zenith, camera_zenith, interval)
+    camera_azimuth = curveangle(azimuth, camera_azimuth, interval)
+    camera_distance = curvevalue(distance, camera_distance, interval)
+    CAMERA_update(0)
+    if levelnum then center text screen width()/2, screen height()/2, caption
+    sync
+  next count
+
+endfunction
+
+function CAMERA_update(controllable as boolean)
+
+  local x as float
+  local y as float
+  local z as float
+
+  `control camera using mouse
+  if controllable
+    dec camera_zenith, -mousemovey() / 10.0
+    inc camera_azimuth, mousemovex() / 10.0
+    inc camera_distance, -mousemovez() / 100.0
+  endif
+
+  `keep sphereical coordinates within boundaries
+  if camera_zenith < 1 then camera_zenith = 1
+  if camera_zenith > 179 then camera_zenith = 179
+  camera_azimuth = wrapvalue(camera_azimuth)
+  if camera_distance < 1 then camera_distance = 1
+  if controllable and camera_distance > 90 then camera_distance = 90
+
+  `convert spherical coordinates to cartesian cordinates
+  x = camera_x + camera_distance * cos(camera_azimuth) * sin(camera_zenith)
+  y = camera_y + camera_distance * cos(camera_zenith)
+  z = camera_z + camera_distance * sin(camera_azimuth) * sin(camera_zenith)
+
+  position camera x, y, z
+  point camera camera_x, camera_y, camera_z
+
+endfunction

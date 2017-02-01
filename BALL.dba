@@ -1,0 +1,150 @@
+Rem *** Include File: BALL.dba ***
+Rem Created: 3/26/2007 4:43:23 PM
+
+Rem Included in Project: C:\Program Files\The Game Creators\Dark Basic Professional\Projects\SuperPong\SuperPong.dbpro
+
+type ball
+  object as dword
+  px as float
+  py as float
+  pz as float
+  sx as float
+  sy as float
+  sz as float
+endtype
+
+function BALL_init()
+
+  dim ball() as ball
+
+endfunction
+
+function BALL_new()
+
+  local index as dword
+
+  array insert at bottom ball()
+  ball().object = make_obj_sphere(1)
+  color object ball().object, rgb(255, 0, 255)
+
+  index = array count(ball())
+
+endfunction index
+
+function BALL_delete(index as dword)
+
+  delete object ball(index).object
+  array delete element ball(), index
+
+endfunction
+
+function BALL_nuke()
+
+  local total as integer
+  local index as dword
+  
+  total = array count(ball())
+  if total = -1 then exitfunction
+  
+  for index = 0 to total
+    BALL_delete(0)
+  next index
+
+endfunction
+
+function BALL_push(index as dword, x as float, y as float, z as float)
+
+  inc ball(index).sx, x
+  inc ball(index).sy, y
+  inc ball(index).sz, z
+  
+endfunction
+
+function BALL_stop(index as dword)
+
+  ball(index).sx = 0
+  ball(index).sy = 0
+  ball(index).sz = 0
+  
+endfunction
+
+function BALL_position(index as dword, x as float, y as float, z as float)
+
+  ball(index).px = x
+  ball(index).py = y
+  ball(index).pz = z
+  position object ball(index).object, x, y, z
+
+endfunction
+
+function BALL_update()
+
+  local total as integer
+  local index as dword
+  local generator_total as integer
+  local generator as dword
+  local colx as float
+  local coly as float
+  local colz as float
+  local skip as boolean
+
+  total = array count(ball())
+  if total = -1 then exitfunction
+  
+  generator_total = array count(generator())
+
+  for index = 0 to total
+  
+    `delete ball if it's too far away
+    if obj_distance(ball(index).object, 0, 0, 0) > 100
+    
+      BALL_delete(index)
+      dec total
+      if total = -1 then exitfunction
+      
+    else
+
+      if object collision(ball(index).object, 0)
+      
+        `calculate collision
+        colx = get object collision x()
+        coly = get object collision y()
+        colz = get object collision z()
+        dec ball(index).px, colx
+        dec ball(index).py, coly
+        dec ball(index).pz, colz
+
+        `make the ball bounce
+        if colx then colx = -2 * ball(index).sx
+        if coly then coly = -2 * ball(index).sy
+        if colz then colz = -2 * ball(index).sz
+
+        BALL_push(index, colx, coly, colz)
+
+      endif
+
+      `apply momentum
+      inc ball(index).px, ball(index).sx
+      inc ball(index).py, ball(index).sy
+      inc ball(index).pz, ball(index).sz
+      
+      if levelnum = 0 and abs(ball(index).pz) > 15
+        if ball(index).pz > 15
+          inc score1
+        else
+          inc score2
+        endif
+        
+        BALL_position(index, 0, 0, 0)
+        BALL_stop(index)
+        repush = 90
+        
+      endif
+
+      position object ball(index).object, ball(index).px, ball(index).py, ball(index).pz
+      
+    endif
+
+  next index
+
+endfunction

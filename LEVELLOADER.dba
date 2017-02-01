@@ -1,0 +1,154 @@
+Rem *** Include File: LEVELLOADER.dba ***
+Rem Created: 3/31/2007 8:12:10 AM
+
+Rem Included in Project: C:\Program Files\The Game Creators\Dark Basic Professional\Projects\SuperPong\SuperPong.dbpro
+
+global levelnum as dword
+global levelname as string
+
+function LEVELLOADER_init()
+
+  dim vals(10) as float
+
+endfunction
+
+function LEVELLOADER_load(levelstr as string)
+
+  local level as dword
+  local str as string
+  local count as dword
+  local returnval as dword
+
+  level = open_to_read(levelstr)
+  
+  while file end(level) = 0
+    read string level, str
+    
+    select str
+    
+      case "[name]"
+        read string level, levelname
+      endcase
+      
+      case "[player]"
+        read string level, str
+        repeat
+          csv$(str)
+          for count = 0 to 3
+            vals(count) = val(csv$(""))
+          next count
+          returnval = PADDLE_new(vals(0))
+          PADDLE_position(returnval, vals(1), vals(2), vals(3))
+          read string level, str
+        until str = ""
+      endcase
+      
+      case "[ball]"
+        read string level, str
+        repeat
+          csv$(str)
+          for count = 0 to 5
+            vals(count) = val(csv$(""))
+          next count
+          returnval = BALL_new()
+          BALL_position(returnval, vals(0), vals(1), vals(2))
+          BALL_push(returnval, vals(3), vals(4), vals(5))
+          read string level, str
+        until str = ""
+      endcase
+      
+      case "[generator]"
+        read string level, str
+        repeat
+          csv$(str)
+          for count = 0 to 6
+            vals(count) = val(csv$(""))
+          next count
+          returnval = GENERATOR_new()
+          GENERATOR_position(returnval, vals(0), vals(1), vals(2))
+          GENERATOR_set(returnval, vals(3), vals(4), vals(5), vals(6))
+          read string level, str
+        until str = ""
+      endcase
+      
+      case "[goal]"
+        read string level, str
+        goal_amount = val(str)
+        read string level, str
+        repeat
+          csv$(str)
+          for count = 0 to 3
+            vals(count) = val(csv$(""))
+          next count
+          returnval = GOAL_new(vals(3))
+          GOAL_position(returnval, vals(0), vals(1), vals(2))
+          read string level, str
+        until str = ""
+      endcase
+      
+      case "[obstacle]"
+        read string level, str
+        repeat
+          csv$(str)
+          for count = 0 to 5
+            vals(count) = val(csv$(""))
+          next count
+          OBSTACLE_new(vals(0), vals(1), vals(2), vals(3), vals(4), vals(5))
+          read string level, str
+        until str = ""
+      endcase
+      
+      case "[camera]"
+      
+        read string level, str
+        csv$(str)
+        for count = 0 to 2
+          vals(count) = val(csv$(""))
+        next count
+        
+        read string level, str
+        csv$(str)
+        for count = 3 to 5
+          vals(count) = val(csv$(""))
+        next count
+        
+        read string level, str
+        vals(6) = val(str)
+        
+        read string level, str
+        csv$(str)
+        for count = 7 to 9
+          vals(count) = val(csv$(""))
+        next count
+
+        cls `bugfix 10:02 AM 8/13/2008 widescreen not clearing
+        CAMERA_position(vals(0), vals(1), vals(2))
+        CAMERA_rotate(vals(3), vals(4), vals(5))
+        set text size 64
+        CAMERA_orbit(vals(6))
+        CAMERA_swing(vals(7), vals(8), vals(9))
+        
+      endcase
+      
+    endselect
+    
+  endwhile
+  
+  set text size 32
+
+endfunction
+
+function LEVELLOADER_unload()
+
+  set text size 64
+  set text font "Comic Sans MS"
+  CAMERA_spiral(270)
+  set text size 32
+
+  BALL_nuke()
+  GENERATOR_nuke()
+  GOAL_nuke()
+  PADDLE_nuke()
+  OBSTACLE_nuke()
+  
+endfunction

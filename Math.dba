@@ -1,0 +1,20 @@
+Rem *** Include File: Math.dba ***
+Rem Created: 3/29/2007 4:15:55 PM
+
+Rem Included in Project: C:\Program Files\The Game Creators\Dark Basic Professional\Projects\SuperPong\SuperPong.dbpro
+
+function objs_distance(object1 as dword, object2 as dword)
+
+  local distance as float
+
+  distance = sqrt((object position x(object1) - object position x(object2))^2 + (object position y(object1) - object position y(object2))^2 + (object position z(object1) - object position z(object2))^2)
+
+endfunction distance
+
+function obj_distance(object1 as dword, x as float, y as float, z as float)
+
+  local distance as float
+
+  distance = sqrt((object position x(object1) - x)^2 + (object position y(object1) - y)^2 + (object position z(object1) - z)^2)
+
+endfunction distance

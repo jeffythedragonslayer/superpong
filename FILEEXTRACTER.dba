@@ -1,0 +1,157 @@
+Rem *** Include File: FILEEXTRACTER.dba ***
+Rem Created: 4/2/2007 8:26:00 AM
+
+Rem Included in Project: C:\Program Files\The Game Creators\Dark Basic Professional\Projects\SuperPong\SuperPong.dbpro
+
+function FILEEXTRACTER_init()
+
+  local currentlevel as dword
+  local str as string
+
+  restore leveldata
+
+  do
+    read str
+    if str = "[name]"
+      if file open(1) = 1 then close file 1
+      if currentlevel
+        if file exist("Level " + str$(currentlevel) + ".txt") then delete file "Level " + str$(currentlevel) + ".txt"
+        open to write 1, "Level " + str$(currentlevel) + ".txt"
+      else
+        if file exist("Classic.txt") then delete file "Classic.txt"
+        open to write 1, "Classic.txt"
+      endif
+      
+      inc currentlevel
+    endif
+    if str = "EOD" then exit
+    write string 1, str
+  loop
+  close file 1
+
+endfunction
+
+leveldata:
+
+
+data "[name]"
+data "Classic"
+data ""
+data "[player]"
+data "1, 0, 0, -10"
+data "2, 0, 0, 10"
+data ""
+data "[ball]"
+data "0, 0, 0, 0, 0, 0"
+data ""
+data "[obstacle]"
+data "0, -1.5, 0, 19, .5, 20"
+data "9.25, -.25, 0, .5, 2, 20"
+data "-9.25, -.25, 0, .5, 2, 20"
+data ""
+data "[camera]"
+data "0, 0, 0"
+data "70, 0, 30"
+data "90"
+data "0, 180, 30"
+data ""
+data "[name]"
+data "Easy"
+data ""
+data "[player]"
+data "1, 0, 0, 0"
+data "2, -5, 0, 5"
+data ""
+data "[generator]"
+data "5, 0, -5, 60, -.1, 0, .1"
+data ""
+data "[goal]"
+data "1"
+data "-10, 0, 10, 2"
+data ""
+data "[camera]"
+data "-2.5, 0, 2.5"
+data "60, 0, 30"
+data "270"
+data "70, -60, 20"
+data ""
+data "[name]"
+data "Zigzag"
+data ""
+data "[player]"
+data "1, 0, 0, -10"
+data "2, 0, 0, 10"
+data ""
+data "[generator]"
+data "0, 0, 0, 30, -.1, 0, -.1"
+data ""
+data "[goal]"
+data "3"
+data "-40, 0, 0, 3"
+data ""
+data "[camera]"
+data "-20, 0, 0"
+data "40, 90, 50"
+data "180"
+data "80, -30, 35"
+data ""
+data "[name]"
+data "Bounce System"
+data ""
+data "[player]"
+data "1, 0, 0, -15"
+data "2, 5, 0, 15"
+data ""
+data "[generator]"
+data "-8, 0, 18, 60, .1, 0, -.1"
+data ""
+data "[goal]"
+data "5"
+data "4, 0, 0, 1"
+data ""
+data "[obstacle]"
+data "0, -1, 0, 2, .5, 20"
+data "-1.25, .25, 0, .5, 2, 20"
+data "0, 1.5, 0, 2, .5, 20"
+data "1.25, .25, 2.5, .5, 2, 25"
+data "9, -1, 0, 2, .5, 20"
+data "7.75, .25, 0, .5, 2, 20"
+data "9, 1.5, 0, 2, .5, 20"
+data "10.25, .25, 0, .5, 2, 20"
+data ""
+data "[camera]"
+data "4, 0, 0"
+data "50, 0, 40"
+data "180"
+data "80, -40, 30"
+data ""
+data "[name]"
+data "Vertical Tunnel"
+data ""
+data "[player]"
+data "1, 0, -5, -5"
+data "2, 0, -5, 5"
+data ""
+data "[generator]"
+data "0, -5, 19, 30, -.1, .1, -.1"
+data "19, -5, 0, 30, .1, .1, .1"
+data "0, -5, -19, 30, .1, .1, .1"
+data "-19, -5, 0, 30, .1, .1, -.1"
+data ""
+data "[goal]"
+data "8"
+data "0, 50, 0, 12"
+data ""
+data "[obstacle]"
+data "20, 15, 0, 1, 60, 39"
+data "0, 15, 20, 39, 60, 1"
+data "-20, 15, 0, 1, 60, 39"
+data "0, 15, -20, 39, 60, 1"
+data "0, -15.5, 0, 39, 1, 39"
+data ""
+data "[camera]"
+data "0, 0, 0"
+data "35, 90, 100"
+data "180"
+data "15, -55, 10"
+data "EOD"

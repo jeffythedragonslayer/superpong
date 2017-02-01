@@ -1,0 +1,43 @@
+Rem *** Include File: OBSTACLE.dba ***
+Rem Created: 4/2/2007 11:28:54 AM
+
+Rem Included in Project: C:\Program Files\The Game Creators\Dark Basic Professional\Projects\SuperPong\SuperPong.dbpro
+
+type obstacle
+  object as dword
+endtype
+
+function OBSTACLE_init()
+
+  dim obstacle() as obstacle
+
+endfunction
+
+function OBSTACLE_new(x as float, y as float, z as float, width as float, height as float, depth as float)
+
+  array insert at bottom obstacle()
+  obstacle().object = make_obj_box(width, height, depth)
+  position object obstacle().object, x, y, z
+
+endfunction
+
+function OBSTACLE_delete(index as dword)
+
+  delete object obstacle(index).object
+  array delete element obstacle(), index
+
+endfunction
+
+function OBSTACLE_nuke()
+
+  local total as integer
+  local index as dword
+
+  total = array count(obstacle())
+  if total = -1 then exitfunction
+
+  for index = 0 to total
+    OBSTACLE_delete(0)
+  next index
+
+endfunction

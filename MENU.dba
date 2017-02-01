@@ -1,0 +1,22 @@
+Rem *** Include File: MENU.dba ***
+Rem Created: 4/7/2007 8:36:15 PM
+
+Rem Included in Project: C:\Program Files\The Game Creators\Dark Basic Professional\Projects\SuperPong\SuperPong.dbpro
+
+type button
+  img as dword
+  spr as dword
+endtype
+
+global menu_classic as button
+global menu_adventure as button
+global menu_quit as button
+
+function MENU_init()
+
+  box (screen width() - text width("Classic"))/2 - 10, (screen height() - text height("Classic"))/2 - 10, (screen width() + text width("Classic"))/2 + 10, (screen height() + text height("Classic"))/2 + 20, rgb(0, 0, 255), rgb(255, 255, 255), rgb(0, 0, 255), rgb(255, 255, 255)
+  center text screen width()/2, screen height()/2, "Classic"
+  menu_classic.img = get_image((screen width() - text width("Classic"))/2 - 10, (screen height() - text height("Classic"))/2 - 10, (screen width() + text width("Classic"))/2 + 10, (screen height() + text height("Classic"))/2 + 20, 1)
+  menu_classic.spr = make_spr(500, 500, menu_classic.img)
+
+endfunction

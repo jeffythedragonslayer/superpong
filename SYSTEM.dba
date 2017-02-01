@@ -1,0 +1,165 @@
+Rem Project: SuperPong
+Rem Created: 3/26/2007 4:42:36 PM
+
+Rem ***** Main Source File *****
+
+SYSTEM_init()
+
+global win as boolean
+global score1 as dword
+global score2 as dword
+global speed as float
+global repush as dword
+
+local keypress as string
+local direction as float
+
+do
+
+BALL_nuke()
+PADDLE_nuke()
+GOAL_nuke()
+GENERATOR_nuke()
+OBSTACLE_nuke()
+
+do
+
+  cls
+
+  set text size 64
+  center text screen width()/2, screen height()/4, "SuperPong"
+  set text size 32
+
+  center text screen width()/2, screen height()/2-40, "(1) Classic"
+  center text screen width()/2, screen height()/2, "(2) Adventure"
+  center text screen width()/2, screen height()/2+40, "(3) Quit"
+
+  keypress = inkey$()
+  if keypress = "1" or keypress = "2" then exit
+  if keypress = "3" then end
+  set text size 16
+  text screen width()-text width("(C) Jeff Linahan 2007"), screen height()-20, "(C) Jeff Linahan 2007"
+
+  sync
+
+loop
+
+levelnum = 0
+
+if keypress = "1"
+
+  speed = .1
+  repush = 1
+  score1 = 0
+  score2 = 0
+
+  LEVELLOADER_load("Classic.txt")
+
+  CAMERA_rotate(0, 180, camera_distance)
+
+  do
+    BALL_update()
+    PADDLE_update()
+
+    if repush
+      dec repush
+      if repush = 0
+        inc speed, .01
+        direction = rnd(90) + (rnd(1)*4-1)*45
+        BALL_push(0, newxvalue(0, direction, speed), 0, newzvalue(0, direction, speed))
+      endif
+    endif
+
+    CAMERA_update(0)
+    center text screen width()/2, 0, "Classic"
+    text 0, 0, "Blue Score: " + str$(score2)
+    text screen width() - text width("Red Score: " + str$(score1)), 0, "Red Score: " + str$(score1)
+    if escapekey() then exit
+    sync
+
+  loop
+
+else
+
+  levelnum = 1
+  LEVELLOADER_load("Level 1.txt")
+
+  do
+
+    GOAL_update()
+
+    if win
+      win = 0
+      do
+        cls
+        set text size 64
+        center text screen width()/2, screen height()/2-20, "Congratulations!"
+        center text screen width()/2, screen height()/2+30, "You Win!"
+        set text size 32
+        center text screen width()/2, screen height()-40, "Press enter key to continue"
+        if returnkey() then exit
+        sync
+      loop
+      exit
+    endif
+
+    GENERATOR_update()
+    BALL_update()
+    PADDLE_update()
+
+    CAMERA_update(1)
+    center text screen width()/2, 0, "Level " + str$(levelnum) + ": " + levelname
+    if escapekey() then exit
+    sync
+
+    if spacekey() then set camera aspect 2 + (5.0/9.0)
+
+  loop
+
+endif
+
+loop
+
+
+function SYSTEM_init()
+
+  sync on
+  sync rate 60
+
+  ink rgb(0, 255, 0), 0
+  set text font "Comic Sans MS"
+  set text size 64
+
+  hide mouse
+  disable escapekey
+
+  set dir "Levels"
+
+  widescreen(1.555)
+  LEVELLOADER_init()
+  CAMERA_init()
+  BALL_init()
+  PADDLE_init()
+  GENERATOR_init()
+  GOAL_init()
+  OBSTACLE_init()
+
+endfunction
+
+function widescreen(aspect as float)
+
+  local extra as dword
+
+  if aspect <= 0 then exitfunction
+
+  set camera aspect aspect
+
+  if aspect > (screen width() / screen height() * 1.0)
+    extra = (screen height() - (screen width() * (1/aspect))) / 2
+    set camera view 0, extra, screen width(), screen height()-extra
+  else
+    extra = (screen width() - (screen height() * aspect)) / 2
+    set camera view extra, 0, screen width()-extra, screen height()
+  endif
+
+endfunction
